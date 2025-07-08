@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calculator, Activity, TrendingUp, Copy, ClipboardCopy } from "lucide-react";
+import { Calculator, TrendingUp, Copy, ClipboardCopy } from "lucide-react";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -84,7 +84,7 @@ export default function VO2MaxCalculator() {
     try {
       await navigator.clipboard.writeText(text);
       toast.success(`Copied ${label} to clipboard!`);
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy to clipboard");
     }
   };
@@ -111,7 +111,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
     try {
       await navigator.clipboard.writeText(allResults);
       toast.success("All results copied to clipboard!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy results to clipboard");
     }
   };

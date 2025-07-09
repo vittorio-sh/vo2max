@@ -94,19 +94,19 @@ export default function VO2MaxCalculator() {
     
     const allResults = `VO2MAX Calculator Results
     
-BMI: ${results.bmi.toFixed(2)} kg/m²
+BMI: ${results.bmi.toFixed(4)} kg/m²
 
 Part 1: Training Estimates
-VO2MAX Estimate: ${results.vo2maxEstimate.toFixed(2)} ml/kg/min
-WMAX Estimate: ${results.wmaxEstimate.toFixed(2)} watts
-Stage 1 Power: ${results.stage1Power.toFixed(2)} watts
-Subsequent Power: ${results.subsequentPower.toFixed(2)} watts
+VO2MAX Estimate: ${results.vo2maxEstimate.toFixed(4)} ml/kg/min
+WMAX Estimate: ${results.wmaxEstimate.toFixed(4)} watts
+Stage 1 Power: ${results.stage1Power.toFixed(4)} watts
+Subsequent Power: ${results.subsequentPower.toFixed(4)} watts
 
 Part 2: Fitness Categories
-Predicted VO2MAX: ${results.predictedVo2max.toFixed(2)} ml/kg/min
-Trained VO2MAX: ${results.trainedVo2max.toFixed(2)} ml/kg/min
-Untrained Lower Bound: ${results.untrainedLowerBound.toFixed(2)} ml/kg/min
-Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
+Predicted VO2MAX: ${results.predictedVo2max.toFixed(4)} ml/kg/min
+Trained VO2MAX: ${results.trainedVo2max.toFixed(4)} ml/kg/min
+Untrained Lower Bound: ${results.untrainedLowerBound.toFixed(4)} ml/kg/min
+Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
 
     try {
       await navigator.clipboard.writeText(allResults);
@@ -199,7 +199,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                         <FormControl>
                           <Input
                             type="number"
-                            step="0.01"
+                            step="0.001"
                             placeholder="Enter your height in meters"
                             {...field}
                             onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
@@ -220,6 +220,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                         <FormControl>
                           <Input
                             type="number"
+                            step="0.1"
                             min="0"
                             max="15"
                             placeholder="Physical Activity Rating (0-15)"
@@ -297,12 +298,12 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                   <h3 className="font-semibold mb-2 text-blue-900">Body Mass Index</h3>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-lg p-2 border-blue-300 text-blue-800 bg-blue-50">
-                      BMI: {results.bmi.toFixed(2)} kg/m²
+                      BMI: {results.bmi.toFixed(4)} kg/m²
                     </Badge>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(`${results.bmi.toFixed(2)}`, "BMI")}
+                      onClick={() => copyToClipboard(`${results.bmi.toFixed(4)}`, "BMI")}
                       className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                     >
                       <Copy className="h-4 w-4" />
@@ -319,11 +320,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">VO2MAX Estimate:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-600 text-white">{results.vo2maxEstimate.toFixed(2)} ml/kg/min</Badge>
+                        <Badge className="bg-blue-600 text-white">{results.vo2maxEstimate.toFixed(4)} ml/kg/min</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.vo2maxEstimate.toFixed(2)}`, "VO2MAX Estimate")}
+                          onClick={() => copyToClipboard(`${results.vo2maxEstimate.toFixed(4)}`, "VO2MAX Estimate")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -333,11 +334,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">WMAX Estimate:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-600 text-white">{results.wmaxEstimate.toFixed(2)} watts</Badge>
+                        <Badge className="bg-blue-600 text-white">{results.wmaxEstimate.toFixed(4)} watts</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.wmaxEstimate.toFixed(2)}`, "WMAX Estimate")}
+                          onClick={() => copyToClipboard(`${results.wmaxEstimate.toFixed(4)}`, "WMAX Estimate")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -347,11 +348,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Stage 1 Power:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-600 text-white">{results.stage1Power.toFixed(2)} watts</Badge>
+                        <Badge className="bg-blue-600 text-white">{results.stage1Power.toFixed(4)} watts</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.stage1Power.toFixed(2)}`, "Stage 1 Power")}
+                          onClick={() => copyToClipboard(`${results.stage1Power.toFixed(4)}`, "Stage 1 Power")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -361,11 +362,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Subsequent Power:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-600 text-white">{results.subsequentPower.toFixed(2)} watts</Badge>
+                        <Badge className="bg-blue-600 text-white">{results.subsequentPower.toFixed(4)} watts</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.subsequentPower.toFixed(2)}`, "Subsequent Power")}
+                          onClick={() => copyToClipboard(`${results.subsequentPower.toFixed(4)}`, "Subsequent Power")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -384,11 +385,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Predicted VO2MAX:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-yellow-500 text-blue-900">{results.predictedVo2max.toFixed(2)} ml/kg/min</Badge>
+                        <Badge className="bg-yellow-500 text-blue-900">{results.predictedVo2max.toFixed(4)} ml/kg/min</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.predictedVo2max.toFixed(2)}`, "Predicted VO2MAX")}
+                          onClick={() => copyToClipboard(`${results.predictedVo2max.toFixed(4)}`, "Predicted VO2MAX")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -398,11 +399,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Trained VO2MAX:</span>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-yellow-600 text-white">{results.trainedVo2max.toFixed(2)} ml/kg/min</Badge>
+                        <Badge className="bg-yellow-600 text-white">{results.trainedVo2max.toFixed(4)} ml/kg/min</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.trainedVo2max.toFixed(2)}`, "Trained VO2MAX")}
+                          onClick={() => copyToClipboard(`${results.trainedVo2max.toFixed(4)}`, "Trained VO2MAX")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -412,11 +413,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Untrained Lower:</span>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="border-blue-300 text-blue-800">{results.untrainedLowerBound.toFixed(2)} ml/kg/min</Badge>
+                        <Badge variant="outline" className="border-blue-300 text-blue-800">{results.untrainedLowerBound.toFixed(4)} ml/kg/min</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.untrainedLowerBound.toFixed(2)}`, "Untrained Lower Bound")}
+                          onClick={() => copyToClipboard(`${results.untrainedLowerBound.toFixed(4)}`, "Untrained Lower Bound")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -426,11 +427,11 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-blue-800">Untrained Upper:</span>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="border-blue-300 text-blue-800">{results.untrainedUpperBound.toFixed(2)} ml/kg/min</Badge>
+                        <Badge variant="outline" className="border-blue-300 text-blue-800">{results.untrainedUpperBound.toFixed(4)} ml/kg/min</Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(`${results.untrainedUpperBound.toFixed(2)}`, "Untrained Upper Bound")}
+                          onClick={() => copyToClipboard(`${results.untrainedUpperBound.toFixed(4)}`, "Untrained Upper Bound")}
                           className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
                         >
                           <Copy className="h-4 w-4" />
@@ -442,6 +443,198 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(2)} ml/kg/min`;
               </CardContent>
             </Card>
           )}
+
+        {/* Detailed Calculation Breakdown */}
+        {results && (
+          <Card className="mt-6 border-blue-200 shadow-xl backdrop-blur-sm bg-white/95">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-lg">
+              <CardTitle className="text-blue-900">Detailed Calculation Breakdown</CardTitle>
+              <CardDescription className="text-blue-700">
+                Exact formulas and numbers used in your calculations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="bg-white">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="inputs">
+                  <AccordionTrigger className="text-blue-900">Input Values Used</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
+                      <div><strong>Age:</strong> {form.watch('age')} years</div>
+                      <div><strong>Weight:</strong> {form.watch('weight')} kg</div>
+                      <div><strong>Height:</strong> {form.watch('height')} m</div>
+                      <div><strong>PAR Score:</strong> {form.watch('par')}</div>
+                      <div><strong>Sex:</strong> {form.watch('sex')} ({form.watch('sex') === 1 ? 'Male' : 'Female'})</div>
+                      <div><strong>BMI:</strong> {results.bmi.toFixed(4)} kg/m²</div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="bmi-calc">
+                  <AccordionTrigger className="text-blue-900">BMI Calculation</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2 p-4 bg-blue-50 rounded-lg">
+                      <div className="font-mono text-sm">
+                        <strong>Formula:</strong> BMI = weight / (height × height)
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> BMI = {form.watch('weight')} / ({form.watch('height')} × {form.watch('height')})
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> BMI = {form.watch('weight')} / {(form.watch('height') * form.watch('height')).toFixed(6)}
+                      </div>
+                      <div className="font-mono text-sm text-blue-900">
+                        <strong>Result:</strong> BMI = {results.bmi.toFixed(4)} kg/m²
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="vo2max-calc">
+                  <AccordionTrigger className="text-blue-900">Part 1: VO2MAX Estimate Calculation</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2 p-4 bg-blue-50 rounded-lg">
+                      <div className="font-mono text-sm">
+                        <strong>Formula:</strong> VO2MAX = 56.363 + (1.921 × PAR) - (0.381 × AGE) - (0.754 × BMI) + (10.987 × SEX)
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Substitution:</strong> VO2MAX = 56.363 + (1.921 × {form.watch('par')}) - (0.381 × {form.watch('age')}) - (0.754 × {results.bmi.toFixed(4)}) + (10.987 × {form.watch('sex')})
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> VO2MAX = 56.363 + {(1.921 * form.watch('par')).toFixed(4)} - {(0.381 * form.watch('age')).toFixed(4)} - {(0.754 * results.bmi).toFixed(4)} + {(10.987 * form.watch('sex')).toFixed(4)}
+                      </div>
+                      <div className="font-mono text-sm text-blue-900">
+                        <strong>Result:</strong> VO2MAX = {results.vo2maxEstimate.toFixed(4)} ml/kg/min
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="wmax-calc">
+                  <AccordionTrigger className="text-blue-900">WMAX Estimate Calculation</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2 p-4 bg-blue-50 rounded-lg">
+                      <div className="font-mono text-sm">
+                        <strong>Formula:</strong> WMAX = ((VO2MAX - 7) × WEIGHT / 1.8) / 6.12
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Substitution:</strong> WMAX = (({results.vo2maxEstimate.toFixed(4)} - 7) × {form.watch('weight')} / 1.8) / 6.12
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> WMAX = ({(results.vo2maxEstimate - 7).toFixed(4)} × {form.watch('weight')} / 1.8) / 6.12
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> WMAX = {((results.vo2maxEstimate - 7) * form.watch('weight') / 1.8).toFixed(4)} / 6.12
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> WMAX = {(((results.vo2maxEstimate - 7) * form.watch('weight') / 1.8) / 6.12).toFixed(4)}
+                      </div>
+                      <div className="font-mono text-sm text-blue-900">
+                        <strong>Result:</strong> WMAX = {results.wmaxEstimate.toFixed(4)} watts
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="power-calc">
+                  <AccordionTrigger className="text-blue-900">Power Calculations</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+                      <div>
+                        <div className="font-mono text-sm">
+                          <strong>Stage 1 Power Formula:</strong> Stage 1 Power = WMAX × 0.25
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Stage 1 Power = {results.wmaxEstimate.toFixed(4)} × 0.25
+                        </div>
+                        <div className="font-mono text-sm text-blue-900">
+                          <strong>Result:</strong> Stage 1 Power = {results.stage1Power.toFixed(4)} watts
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-mono text-sm">
+                          <strong>Subsequent Power Formula:</strong> Subsequent Power = (WMAX - Stage 1 Power) / 8
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Subsequent Power = ({results.wmaxEstimate.toFixed(4)} - {results.stage1Power.toFixed(4)}) / 8
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Subsequent Power = {(results.wmaxEstimate - results.stage1Power).toFixed(4)} / 8
+                        </div>
+                        <div className="font-mono text-sm text-blue-900">
+                          <strong>Result:</strong> Subsequent Power = {results.subsequentPower.toFixed(4)} watts
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="predicted-calc">
+                  <AccordionTrigger className="text-blue-900">Part 2: Predicted VO2MAX Calculation</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2 p-4 bg-blue-50 rounded-lg">
+                      <div className="font-mono text-sm">
+                        <strong>Formula:</strong> Predicted VO2MAX = 79.9 - (0.39 × AGE) - (13.7 × SEX) - (0.127 × (WEIGHT × 2.2))
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Substitution:</strong> Predicted VO2MAX = 79.9 - (0.39 × {form.watch('age')}) - (13.7 × {form.watch('sex')}) - (0.127 × ({form.watch('weight')} × 2.2))
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> Predicted VO2MAX = 79.9 - {(0.39 * form.watch('age')).toFixed(4)} - {(13.7 * form.watch('sex')).toFixed(4)} - (0.127 × {(form.watch('weight') * 2.2).toFixed(4)})
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> Predicted VO2MAX = 79.9 - {(0.39 * form.watch('age')).toFixed(4)} - {(13.7 * form.watch('sex')).toFixed(4)} - {(0.127 * form.watch('weight') * 2.2).toFixed(4)}
+                      </div>
+                      <div className="font-mono text-sm text-blue-900">
+                        <strong>Result:</strong> Predicted VO2MAX = {results.predictedVo2max.toFixed(4)} ml/kg/min
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="fitness-calc">
+                  <AccordionTrigger className="text-blue-900">Fitness Categories Calculation</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+                      <div>
+                        <div className="font-mono text-sm">
+                          <strong>Trained VO2MAX Formula:</strong> Trained VO2MAX = Predicted VO2MAX × 1.2
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Trained VO2MAX = {results.predictedVo2max.toFixed(4)} × 1.2
+                        </div>
+                        <div className="font-mono text-sm text-blue-900">
+                          <strong>Result:</strong> Trained VO2MAX = {results.trainedVo2max.toFixed(4)} ml/kg/min
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-mono text-sm">
+                          <strong>Untrained Lower Bound Formula:</strong> Lower Bound = Predicted VO2MAX × 0.8
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Lower Bound = {results.predictedVo2max.toFixed(4)} × 0.8
+                        </div>
+                        <div className="font-mono text-sm text-blue-900">
+                          <strong>Result:</strong> Lower Bound = {results.untrainedLowerBound.toFixed(4)} ml/kg/min
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-mono text-sm">
+                          <strong>Untrained Upper Bound Formula:</strong> Upper Bound = Predicted VO2MAX × 1.0
+                        </div>
+                        <div className="font-mono text-sm">
+                          <strong>Calculation:</strong> Upper Bound = {results.predictedVo2max.toFixed(4)} × 1.0
+                        </div>
+                        <div className="font-mono text-sm text-blue-900">
+                          <strong>Result:</strong> Upper Bound = {results.untrainedUpperBound.toFixed(4)} ml/kg/min
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </CardContent>
+          </Card>
+        )}
         </div>
 
         {/* Calculation Formulas */}

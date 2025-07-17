@@ -55,14 +55,16 @@ export default function VO2MaxCalculator() {
     // Calculate BMI
     const bmi = values.weight / (values.height * values.height);
 
-    // Part 1 Calculations
-    const vo2maxEstimate = 56.363 + (1.921 * values.par) - (0.381 * values.age) - (0.754 * bmi) + (10.987 * values.sex);
+    // Part 1 Calculations - Use original encoding: Female = 0, Male = 1
+    const sexForPart1 = values.sex === 1 ? 0 : 1; // Convert new encoding to old encoding
+    const vo2maxEstimate = 56.363 + (1.921 * values.par) - (0.381 * values.age) - (0.754 * bmi) + (10.987 * sexForPart1);
     const wmaxEstimate = ((vo2maxEstimate - 7) * values.weight / 1.8) / 6.12;
     const stage1Power = wmaxEstimate * 0.25;
     const subsequentPower = (wmaxEstimate - stage1Power) / 8;
 
-    // Part 2 Calculations
-    const predictedVo2max = 79.9 - (0.39 * values.age) - (13.7 * values.sex) - (0.127 * (values.weight * 2.2));
+    // Part 2 Calculations - Use new encoding: Female = 1, Male = 0
+    const sexForPart2 = values.sex; // Keep new encoding as is
+    const predictedVo2max = 79.9 - (0.39 * values.age) - (13.7 * sexForPart2) - (0.127 * (values.weight * 2.2));
     const trainedVo2max = predictedVo2max * 1.2;
     const untrainedLowerBound = predictedVo2max * 0.8;
     const untrainedUpperBound = predictedVo2max * 1.0;
@@ -250,8 +252,8 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="0">Female</SelectItem>
-                            <SelectItem value="1">Male</SelectItem>
+                            <SelectItem value="1">Female</SelectItem>
+                            <SelectItem value="0">Male</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -463,7 +465,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                       <div><strong>Weight:</strong> {form.watch('weight')} kg</div>
                       <div><strong>Height:</strong> {form.watch('height')} m</div>
                       <div><strong>PAR Score:</strong> {form.watch('par')}</div>
-                      <div><strong>Sex:</strong> {form.watch('sex')} ({form.watch('sex') === 1 ? 'Male' : 'Female'})</div>
+                      <div><strong>Sex:</strong> {form.watch('sex')} ({form.watch('sex') === 1 ? 'Female' : 'Male'})</div>
                       <div><strong>BMI:</strong> {results.bmi.toFixed(4)} kg/m²</div>
                     </div>
                   </AccordionContent>
@@ -497,10 +499,16 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                         <strong>Formula:</strong> VO2MAX = 56.363 + (1.921 × PAR) - (0.381 × AGE) - (0.754 × BMI) + (10.987 × SEX)
                       </div>
                       <div className="font-mono text-sm">
-                        <strong>Substitution:</strong> VO2MAX = 56.363 + (1.921 × {form.watch('par')}) - (0.381 × {form.watch('age')}) - (0.754 × {results.bmi.toFixed(4)}) + (10.987 × {form.watch('sex')})
+                        <strong>Note:</strong> Part 1 uses original encoding: Female = 0, Male = 1
                       </div>
                       <div className="font-mono text-sm">
-                        <strong>Calculation:</strong> VO2MAX = 56.363 + {(1.921 * form.watch('par')).toFixed(4)} - {(0.381 * form.watch('age')).toFixed(4)} - {(0.754 * results.bmi).toFixed(4)} + {(10.987 * form.watch('sex')).toFixed(4)}
+                        <strong>Sex for Part 1:</strong> {form.watch('sex') === 1 ? 'Female (0)' : 'Male (1)'}
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Substitution:</strong> VO2MAX = 56.363 + (1.921 × {form.watch('par')}) - (0.381 × {form.watch('age')}) - (0.754 × {results.bmi.toFixed(4)}) + (10.987 × {form.watch('sex') === 1 ? 0 : 1})
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Calculation:</strong> VO2MAX = 56.363 + {(1.921 * form.watch('par')).toFixed(4)} - {(0.381 * form.watch('age')).toFixed(4)} - {(0.754 * results.bmi).toFixed(4)} + {(10.987 * (form.watch('sex') === 1 ? 0 : 1)).toFixed(4)}
                       </div>
                       <div className="font-mono text-sm text-blue-900">
                         <strong>Result:</strong> VO2MAX = {results.vo2maxEstimate.toFixed(4)} ml/kg/min
@@ -574,6 +582,12 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                     <div className="space-y-2 p-4 bg-blue-50 rounded-lg">
                       <div className="font-mono text-sm">
                         <strong>Formula:</strong> Predicted VO2MAX = 79.9 - (0.39 × AGE) - (13.7 × SEX) - (0.127 × (WEIGHT × 2.2))
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Note:</strong> Part 2 uses new encoding: Female = 1, Male = 0
+                      </div>
+                      <div className="font-mono text-sm">
+                        <strong>Sex for Part 2:</strong> {form.watch('sex') === 1 ? 'Female (1)' : 'Male (0)'}
                       </div>
                       <div className="font-mono text-sm">
                         <strong>Substitution:</strong> Predicted VO2MAX = 79.9 - (0.39 × {form.watch('age')}) - (13.7 × {form.watch('sex')}) - (0.127 × ({form.watch('weight')} × 2.2))
@@ -665,7 +679,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                       VO2MAX = 56.363 + (1.921 × PAR) - (0.381 × AGE) - (0.754 × BMI) + (10.987 × SEX)
                     </div>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Where SEX: Female = 0, Male = 1
+                      Where SEX: Female = 0, Male = 1 (Part 1 uses original encoding)
                     </p>
                   </div>
 
@@ -701,7 +715,7 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                       Predicted VO2MAX = 79.9 - (0.39 × AGE) - (13.7 × SEX) - (0.127 × (WEIGHT × 2.2))
                     </div>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Where SEX: Female = 0, Male = 1
+                      Where SEX: Female = 1, Male = 0 (Part 2 uses new encoding)
                     </p>
                   </div>
 

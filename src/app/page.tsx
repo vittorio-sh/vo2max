@@ -13,8 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calculator, TrendingUp, Copy, ClipboardCopy } from "lucide-react";
+import { Calculator, TrendingUp, Copy, ClipboardCopy, Info } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const formSchema = z.object({
   age: z.number().min(1, "Age must be at least 1").max(150, "Age must be less than 150"),
@@ -238,6 +240,100 @@ Untrained Upper Bound: ${results.untrainedUpperBound.toFixed(4)} ml/kg/min`;
                       </FormItem>
                     )}
                   />
+
+                  {/* PAR Scale Reference */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="w-full text-blue-700 border-blue-300 hover:bg-blue-50">
+                        <Info className="h-4 w-4 mr-2" />
+                        View PAR Scale Reference Table
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl">Physical Activity Rating (PAR) Scale</DialogTitle>
+                        <DialogDescription className="text-base">
+                          Select the number that best describes your overall level of physical activity for the previous 6 months
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-20 text-center font-bold text-blue-900">PAR Score</TableHead>
+                              <TableHead className="font-bold text-blue-900">Description</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">0</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">avoid walking or exertion, e.g., always use elevator, drive when possible instead of walking</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">1</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">light activity: walk for pleasure, routine use of stairs, occasionally exercise sufficiently to cause heavy breathing and perspiration</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">2</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">moderate activity: 10 to 60 min·wk⁻¹ of moderate activity, such as golf, horseback riding, calisthenics, table tennis, bowling, weight lifting, yard work, cleaning house, walking for exercise</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">3</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">moderate activity: more than 1 h·wk⁻¹ of activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">4</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run less than 1 mile (1.6km) per week or spend less than 30 min·wk⁻¹ in comparable activity such as running or jogging, lap swimming, cycling, rowing, aerobics, skipping rope, running in place, or engaging in vigorous aerobic-type activity such as soccer, basketball, tennis, racquetball, or handball</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">5</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 1 mile  (1.6km) to less than 5 miles (8km) per week or spend 30 min to less than 60 min·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">6</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 5 miles (8km) to less than 10 miles (16km) per week or spend 1 h to less than 3 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">7</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 10 miles (16km) to less than 15 miles (24km) per week or spend 3 h to less than 6 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">8</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 15 miles (24km) to less than 20 miles (32km) per week or spend 6 h to less than 7 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">9</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 20 miles (32 km) to less than 25 miles (40km) per week or spend 7 h to less than 8 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">10</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 25 miles (40km) to less than 30 miles (38km) per week or spend 8 h to less than 9 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">11</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 30 miles (38km) to less than 35 miles (56km) per week or spend 9 h to less than 10 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">12</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 35 miles (56km) to less than 40 miles (64km) per week or spend 10 h to less than 11 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">13</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 40 miles (64km) to less than 45 miles (72km) per week or spend 11 h to less than 12 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">14</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 45 miles (72km) to less than 50 miles (80.5km) per week or spend 12 h to less than 13 h·wk⁻¹ in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell className="font-bold text-blue-900 text-center align-top">15</TableCell>
+                              <TableCell className="text-sm leading-relaxed whitespace-normal">vigorous activity: run 50 miles (80.5km) or more per week or spend 13 h or more per week in comparable physical activity as described previously</TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
 
                   <FormField
                     control={form.control}

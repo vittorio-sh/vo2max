@@ -25,7 +25,7 @@ export default function MetronomeApp() {
   const [countdownNumber, setCountdownNumber] = useState(3);
   const [currentPhase, setCurrentPhase] = useState<'in' | 'out'>('in');
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [circleSize, setCircleSize] = useState({ mobile: 248, desktop: 312 });
+  const circleSize = { mobile: 248, desktop: 312 };
   
   // Edit states
   const [editingBreathIn, setEditingBreathIn] = useState(false);
@@ -576,10 +576,10 @@ export default function MetronomeApp() {
                           variant={settings.soundType === sound.value ? 'default' : 'outline'}
                           size="sm"
                           onClick={() => {
-                            setSettings(prev => ({ ...prev, soundType: sound.value as any }));
+                            setSettings(prev => ({ ...prev, soundType: sound.value as 'sine' | 'bell' | 'chime' | 'soft' }));
                             // Play a sample of the selected sound
                             setTimeout(() => {
-                              const tempSettings = { ...settings, soundType: sound.value as any };
+                              const tempSettings = { ...settings, soundType: sound.value as 'sine' | 'bell' | 'chime' | 'soft' };
                               if (audioContextRef.current && tempSettings.soundEnabled) {
                                 const oscillator = audioContextRef.current.createOscillator();
                                 const gainNode = audioContextRef.current.createGain();

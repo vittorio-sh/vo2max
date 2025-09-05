@@ -13,9 +13,9 @@ import { Switch } from "@/components/ui/switch";
 interface MetronomeSettings {
   breathInDuration: number;
   breathOutDuration: number;
-  numberOfCycles: number;
   soundEnabled: boolean;
   visualEnabled: boolean;
+  soundType: 'sine' | 'bell' | 'chime' | 'soft';
 }
 
 export default function MetronomeApp() {
@@ -25,30 +25,23 @@ export default function MetronomeApp() {
   const [countdownNumber, setCountdownNumber] = useState(3);
   const [currentPhase, setCurrentPhase] = useState<'in' | 'out'>('in');
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [currentCycle, setCurrentCycle] = useState(1);
+  const [circleSize, setCircleSize] = useState({ mobile: 248, desktop: 312 });
   
   // Edit states
-  const [editingCycles, setEditingCycles] = useState(false);
   const [editingBreathIn, setEditingBreathIn] = useState(false);
   const [editingBreathOut, setEditingBreathOut] = useState(false);
-  const [tempCycles, setTempCycles] = useState('');
   const [tempBreathIn, setTempBreathIn] = useState('');
   const [tempBreathOut, setTempBreathOut] = useState('');
   
   const [settings, setSettings] = useState<MetronomeSettings>({
     breathInDuration: 4000, // 4 seconds
     breathOutDuration: 6000, // 6 seconds
-    numberOfCycles: 5,
     soundEnabled: true,
     visualEnabled: true,
+    soundType: 'sine',
   });
 
   // Edit functions
-  const startEditingCycles = () => {
-    setEditingCycles(true);
-    setTempCycles(settings.numberOfCycles.toString());
-  };
-
   const startEditingBreathIn = () => {
     setEditingBreathIn(true);
     setTempBreathIn((settings.breathInDuration / 1000).toString());
@@ -57,14 +50,6 @@ export default function MetronomeApp() {
   const startEditingBreathOut = () => {
     setEditingBreathOut(true);
     setTempBreathOut((settings.breathOutDuration / 1000).toString());
-  };
-
-  const saveCycles = () => {
-    const value = parseInt(tempCycles);
-    if (value >= 1 && value <= 100) {
-      setSettings(prev => ({ ...prev, numberOfCycles: value }));
-    }
-    setEditingCycles(false);
   };
 
   const saveBreathIn = () => {
@@ -84,7 +69,6 @@ export default function MetronomeApp() {
   };
 
   const cancelEdit = () => {
-    setEditingCycles(false);
     setEditingBreathIn(false);
     setEditingBreathOut(false);
   };
@@ -104,7 +88,7 @@ export default function MetronomeApp() {
     };
   }, []);
 
-  // Play beep sound
+  // Play beep sound with different sound types
   const playBeep = (frequency: number = 800, duration: number = 200) => {
     if (!audioContextRef.current || !settings.soundEnabled) return;
 
@@ -115,9 +99,32 @@ export default function MetronomeApp() {
     gainNode.connect(audioContextRef.current.destination);
 
     oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-    oscillator.type = 'sine';
+    
+    // Set oscillator type based on sound setting
+    switch (settings.soundType) {
+      case 'sine':
+        oscillator.type = 'sine';
+        break;
+      case 'bell':
+        oscillator.type = 'triangle';
+        frequency = frequency * 1.5; // Higher pitch for bell-like sound
+        oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        break;
+      case 'chime':
+        oscillator.type = 'square';
+        gainNode.gain.setValueAtTime(0.1, audioContextRef.current.currentTime); // Softer for chime
+        break;
+      case 'soft':
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.15, audioContextRef.current.currentTime); // Much softer
+        frequency = frequency * 0.8; // Lower pitch for soft sound
+        oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        break;
+    }
 
-    gainNode.gain.setValueAtTime(0.3, audioContextRef.current.currentTime);
+    if (settings.soundType !== 'chime' && settings.soundType !== 'soft') {
+      gainNode.gain.setValueAtTime(0.3, audioContextRef.current.currentTime);
+    }
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + duration / 1000);
 
     oscillator.start(audioContextRef.current.currentTime);
@@ -133,11 +140,11 @@ export default function MetronomeApp() {
     const countdown = (num: number) => {
       if (num > 0) {
         setCountdownNumber(num);
-        playBeep(1000, 200);
+        // No beep during countdown
         countdownTimeoutRef.current = setTimeout(() => countdown(num - 1), 1000);
       } else {
         setCountdownNumber(0);
-        playBeep(800, 300); // "Go" beep
+        // No "Go" beep
         countdownTimeoutRef.current = setTimeout(() => {
           setIsCountdown(false);
           startBreathingSession();
@@ -152,22 +159,14 @@ export default function MetronomeApp() {
   const startBreathingSession = () => {
     setIsPlaying(true);
     setCurrentPhase('in');
-    setCurrentCycle(1);
     setTimeRemaining(settings.breathInDuration);
 
     // Start the cycle
-    startCycle(1);
+    startCycle();
   };
 
-  // Start a single cycle (breath in + breath out)
-  const startCycle = (cycleNumber: number) => {
-    if (cycleNumber > settings.numberOfCycles) {
-      // All cycles completed
-      stopMetronome();
-      return;
-    }
-
-    setCurrentCycle(cycleNumber);
+  // Start a single cycle (breath in + breath out) - now infinite
+  const startCycle = () => {
     setCurrentPhase('in');
     setTimeRemaining(settings.breathInDuration);
 
@@ -184,9 +183,9 @@ export default function MetronomeApp() {
         playBeep(600, 200);
       }
 
-      // Schedule next cycle or completion
+      // Schedule next cycle (infinite loop)
       phaseTimeoutRef.current = setTimeout(() => {
-        startCycle(cycleNumber + 1);
+        startCycle();
       }, settings.breathOutDuration);
 
     }, settings.breathInDuration);
@@ -213,7 +212,6 @@ export default function MetronomeApp() {
     setIsCountdown(false);
     setCurrentPhase('in');
     setTimeRemaining(0);
-    setCurrentCycle(1);
     // Don't set sessionCompleted(true) here - only when session naturally completes
 
     if (phaseTimeoutRef.current) {
@@ -258,7 +256,11 @@ export default function MetronomeApp() {
 
   const getProgressPercentage = () => {
     const currentDuration = currentPhase === 'in' ? settings.breathInDuration : settings.breathOutDuration;
-    return ((currentDuration - timeRemaining) / currentDuration) * 100;
+    const progress = ((currentDuration - timeRemaining) / currentDuration) * 100;
+    
+    // For breath in: circle grows from 0 to 100%
+    // For breath out: circle shrinks from 100% to 0%
+    return currentPhase === 'in' ? progress : (100 - progress);
   };
 
   // Full screen breathing display
@@ -281,28 +283,38 @@ export default function MetronomeApp() {
             // Breathing session display
             settings.visualEnabled && (
               <div className="text-center">
-                <div className="text-4xl md:text-8xl font-light text-gray-900 mb-8 md:mb-12 transition-all duration-300">
-                  {currentPhase === 'in' ? 'BREATHE IN' : 'BREATHE OUT'}
-                </div>
-                
-                {/* Cycle counter */}
-                <div className="text-lg md:text-xl font-light text-gray-600 mb-6 md:mb-8">
-                  Cycle {currentCycle} of {settings.numberOfCycles}
-                </div>
-                
-                {/* Progress Bar - Centered */}
-                <div className="flex justify-center mb-8 md:mb-12">
-                  <div className="w-72 md:w-96 bg-gray-100 rounded-full h-2 md:h-3">
-                    <div 
-                      className="h-2 md:h-3 rounded-full transition-all duration-100 bg-gray-900"
-                      style={{ width: `${getProgressPercentage()}%` }}
-                    />
+                {/* Breathing Circle */}
+                <div className="flex flex-col items-center mb-8 md:mb-12">
+                  <div className="relative mb-4">
+                    {/* Outer circle (background) */}
+                    <div className="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-gray-200 flex items-center justify-center">
+                      {/* Inner animated circle */}
+                      <div 
+                        className="rounded-full transition-all duration-100 bg-black md:hidden"
+                        style={{ 
+                          width: `${Math.max(20, (getProgressPercentage() / 100) * circleSize.mobile)}px`,
+                          height: `${Math.max(20, (getProgressPercentage() / 100) * circleSize.mobile)}px`,
+                        }}
+                      />
+                      <div 
+                        className="rounded-full transition-all duration-100 bg-black hidden md:block"
+                        style={{ 
+                          width: `${Math.max(20, (getProgressPercentage() / 100) * circleSize.desktop)}px`,
+                          height: `${Math.max(20, (getProgressPercentage() / 100) * circleSize.desktop)}px`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Time display below circle */}
+                  <div className="text-2xl md:text-4xl font-light text-gray-900">
+                    {formatTime(timeRemaining)}
                   </div>
                 </div>
                 
-                {/* Time Remaining */}
-                <div className="text-3xl md:text-5xl font-light text-gray-900">
-                  {formatTime(timeRemaining)}
+                {/* Phase indicator */}
+                <div className="text-4xl md:text-6xl lg:text-7xl font-light text-gray-900 mt-4">
+                  {currentPhase === 'in' ? 'Breathe In' : 'Breathe Out'}
                 </div>
               </div>
             )
@@ -370,65 +382,14 @@ export default function MetronomeApp() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 bg-white space-y-6">
-              {/* Number of Cycles */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-gray-900 font-medium">
-                    Number of Cycles: {settings.numberOfCycles}
-                  </Label>
-                  {!editingCycles && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={startEditingCycles}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
-                  )}
+              {/* Infinite Session Info */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="text-sm font-medium text-blue-900 mb-1">
+                  Infinite Breathing Session
                 </div>
-                
-                {editingCycles ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={tempCycles}
-                      onChange={(e) => setTempCycles(e.target.value)}
-                      className="flex-1"
-                      placeholder="Enter cycles (1-100)"
-                      min="1"
-                      max="100"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={saveCycles}
-                      className="h-8 w-8 p-0 text-green-600"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={cancelEdit}
-                      className="h-8 w-8 p-0 text-red-600"
-                    >
-                      <XIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Slider
-                    value={[settings.numberOfCycles]}
-                    onValueChange={(value) => setSettings(prev => ({ ...prev, numberOfCycles: value[0] }))}
-                    max={10}
-                    min={1}
-                    step={1}
-                    className="w-full"
-                  />
-                )}
-                <p className="text-xs text-gray-500">
-                  How many complete breathing cycles to complete
-                </p>
+                <div className="text-xs text-blue-700">
+                  This session will continue until you stop it manually
+                </div>
               </div>
 
               <Separator className="bg-gray-100" />
@@ -598,18 +559,87 @@ export default function MetronomeApp() {
                     onCheckedChange={(checked) => setSettings(prev => ({ ...prev, visualEnabled: checked }))}
                   />
                 </div>
+
+                {/* Sound Type Selection */}
+                {settings.soundEnabled && (
+                  <div className="space-y-3">
+                    <Label className="text-gray-900 font-medium">Sound Type</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'sine', label: 'Classic' },
+                        { value: 'bell', label: 'Bell' },
+                        { value: 'chime', label: 'Chime' },
+                        { value: 'soft', label: 'Soft' }
+                      ].map((sound) => (
+                        <Button
+                          key={sound.value}
+                          variant={settings.soundType === sound.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            setSettings(prev => ({ ...prev, soundType: sound.value as any }));
+                            // Play a sample of the selected sound
+                            setTimeout(() => {
+                              const tempSettings = { ...settings, soundType: sound.value as any };
+                              if (audioContextRef.current && tempSettings.soundEnabled) {
+                                const oscillator = audioContextRef.current.createOscillator();
+                                const gainNode = audioContextRef.current.createGain();
+                                oscillator.connect(gainNode);
+                                gainNode.connect(audioContextRef.current.destination);
+                                
+                                let frequency = 800;
+                                switch (sound.value) {
+                                  case 'sine':
+                                    oscillator.type = 'sine';
+                                    break;
+                                  case 'bell':
+                                    oscillator.type = 'triangle';
+                                    frequency = frequency * 1.5;
+                                    break;
+                                  case 'chime':
+                                    oscillator.type = 'square';
+                                    gainNode.gain.setValueAtTime(0.1, audioContextRef.current.currentTime);
+                                    break;
+                                  case 'soft':
+                                    oscillator.type = 'sine';
+                                    gainNode.gain.setValueAtTime(0.15, audioContextRef.current.currentTime);
+                                    frequency = frequency * 0.8;
+                                    break;
+                                }
+                                
+                                oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+                                if (sound.value !== 'chime' && sound.value !== 'soft') {
+                                  gainNode.gain.setValueAtTime(0.3, audioContextRef.current.currentTime);
+                                }
+                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.2);
+                                
+                                oscillator.start(audioContextRef.current.currentTime);
+                                oscillator.stop(audioContextRef.current.currentTime + 0.2);
+                              }
+                            }, 100);
+                          }}
+                          className="text-xs"
+                        >
+                          {sound.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Click to preview and select your preferred sound
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Session Info */}
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-medium text-gray-900 mb-2">Session Info</h4>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <div>Total Cycles: {settings.numberOfCycles}</div>
+                  <div>Session: Infinite (continuous)</div>
                   <div>Breath In: {settings.breathInDuration / 1000}s</div>
                   <div>Breath Out: {settings.breathOutDuration / 1000}s</div>
                   <div>Cycle Duration: {(settings.breathInDuration + settings.breathOutDuration) / 1000}s</div>
                   <div>Beeps per Minute: {Math.round((60 * 1000 * 2) / (settings.breathInDuration + settings.breathOutDuration))}</div>
-                  <div>Total Session Time: {Math.round((settings.numberOfCycles * (settings.breathInDuration + settings.breathOutDuration)) / 1000)}s</div>
+                  <div>Sound: {settings.soundEnabled ? settings.soundType.charAt(0).toUpperCase() + settings.soundType.slice(1) : 'Disabled'}</div>
                 </div>
               </div>
             </CardContent>
